@@ -28,8 +28,16 @@ open import Data.Nat.Square
 
 insert : cmp (Π A λ x → Π (list A) λ l → Π (sorted l) λ _ → F (Σ⁺ (list A) λ l' → sorted-of (x ∷ l) l'))
 insert x []       []       = ret ([ x ] , refl , [] ∷ [])
-insert x (y ∷ ys) (h ∷ hs) =
-  bind (F _) (x ≤? y) $ case-≤
+insert x (y ∷ ys) (h ∷ hs) = 
+    {!bind (sorted-of (x ∷ l) l' _) (x ≤? y) $ case-≤
+    (λ x≤y → ret (x (y ∷ ys), refl, (x≤y ∷ ≤-≤* x≤y h) ∷ (h ∷ hs)))
+    (λ x≰y →
+      bind (F _) (insert x ys hs) λ (x∷ys' , x∷ys↭x∷ys' , sorted-x∷ys') →
+      ret
+        ( y ∷ x∷ys' , (let open PermutationReasoning in 
+          begin
+            x ∷ y ∷ ys!}
+    {- bind (F _) (x ≤? y) $ case-≤
     (λ x≤y → ret (x ∷ (y ∷ ys) , refl , (x≤y ∷ ≤-≤* x≤y h) ∷ (h ∷ hs)))
     (λ x≰y →
       bind (F _) (insert x ys hs) λ (x∷ys' , x∷ys↭x∷ys' , sorted-x∷ys') →
@@ -45,8 +53,8 @@ insert x (y ∷ ys) (h ∷ hs) =
             ∎
           )
         , All-resp-↭ x∷ys↭x∷ys' (≰⇒≥ x≰y ∷ h) ∷ sorted-x∷ys'
-        ))
-
+        )) -}
+{-
 insert/total : ∀ x l h → IsValuable (insert x l h)
 insert/total x []       []       u = ↓ refl
 insert/total x (y ∷ ys) (h ∷ hs) u with ≤?-total x y u
@@ -142,3 +150,4 @@ sort/is-bounded (x ∷ xs) =
 
 sort/asymptotic : given (list A) measured-via length , sort ∈𝓞(λ n → n ²)
 sort/asymptotic = f[n]≤g[n]via sort/is-bounded
+-}
